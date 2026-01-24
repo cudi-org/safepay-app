@@ -227,20 +227,28 @@ class SendNotifier extends StateNotifier<SendState> {
   Future<bool> confirmFinalTransaction() async {
     state = state.copyWith(isLoading: true);
 
-    // Aquí iría la lógica real de enviar a la blockchain/API
-    // usando state.amount, state.mainRecipient, state.type, etc.
+    try {
+       // 1. Recuperar token de sesión seguro (Simulación de "desbloqueo de clave")
+       // En una app real, aquí desencriptaríamos la Private Key usando el input biométrico
+       // final sessionToken = await _secureStorage.getSessionToken();
+       // if (sessionToken == null) throw Exception('Unauthorized');
 
-    await Future.delayed(const Duration(seconds: 2));
+      // 2. Lógica real de envío
+      // final result = await _apiClient.sendTransaction(...)
+      
+      await Future.delayed(const Duration(seconds: 2)); // Simulación de red
 
-    final bool success = true; // Simular éxito
-
-    if (success) {
+      // Éxito
       state = state.copyWith(isLoading: false);
-      // Resetear el estado después de un envío exitoso
+      // Resetear estado
       state = SendState(senderWallet: state.senderWallet);
       return true;
-    } else {
-      state = state.copyWith(isLoading: false, errorMessage: 'Network Error');
+      
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false, 
+        errorMessage: 'Transaction Failed: ${e.toString()}'
+      );
       return false;
     }
   }
@@ -249,33 +257,29 @@ class SendNotifier extends StateNotifier<SendState> {
 // =====================================================================
 // 4. LOS PROVIDERS (¡AHORA CORREGIDOS!)
 // =====================================================================
-
 final sendNotifierProvider =
     StateNotifierProvider<SendNotifier, SendState>((ref) {
+  // Inyectamos Secure Storage (aunque por ahora solo lo mencionamos en comentarios)
+  // final secureStorage = ref.watch(secureStorageProvider);
   return SendNotifier();
-}); // <-- ¡ERROR ARREGLADO! La llave se cierra aquí.
+});
 
-// Provider para el balance disponible (simulado)
-// (Ahora está en el nivel superior, fuera del otro provider)
+// Provider para el balance disponible
 final availableBalanceProvider = Provider<String>((ref) {
-  // Ahora podemos leerlo desde el senderWallet en el state
   final balance =
       ref.watch(sendNotifierProvider).senderWallet?.currentBalance ?? 0.0;
-  return CurrencyFormatter.format(balance);
+  return CurrencyFormatter.formatYield(balance); // Usar formatYield para consistencia
 });
 
 // Provider que te faltaba: 'isAmountValidProvider'
-// (Ahora está en el nivel superior)
 final isAmountValidProvider = Provider<bool>((ref) {
   final amount = ref.watch(sendNotifierProvider).amount;
-  // Lo leemos del state
   final balance =
       ref.watch(sendNotifierProvider).senderWallet?.currentBalance ?? 0.0;
   return amount > 0 && amount <= balance;
 });
 
 // Provider de 'send_safe_details_screen.dart'
-// (Ahora está en el nivel superior)
 final areDetailsCompleteProvider = Provider<bool>((ref) {
   final state = ref.watch(sendNotifierProvider);
 
@@ -283,18 +287,15 @@ final areDetailsCompleteProvider = Provider<bool>((ref) {
 
   switch (state.type) {
     case PaymentType.single:
-      return true; // Solo necesita concepto
+      return true;
     case PaymentType.recurrent:
-      // Necesita lógica de validación de ciclos/fecha
-      return true; // Simplificado por ahora
+      return true;
     case PaymentType.divided:
       if (state.safers.isEmpty) return false;
       if (!state.isSplitEqual) {
-        // Validar que el split custom sume 100% (o el total)
         final totalSplit = state.customSplit.values.fold(0.0, (a, b) => a + b);
-        // Pequeña tolerancia para errores de punto flotante
         return (totalSplit - state.amount).abs() < 0.01;
       }
-      return true; // Split equitativo es válido por defecto si hay safers
+      return true;
   }
 });

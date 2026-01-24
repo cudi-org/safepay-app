@@ -5,8 +5,8 @@ import 'package:safepay/core/constants/app_colors.dart';
 import 'package:safepay/features/send/providers/send_notifier.dart';
 import 'package:safepay/core/providers/global_providers.dart';
 import 'package:safepay/utils/currency_formatter.dart';
-// SOLUCIÓN 1: Eliminamos este import. 'global_providers.dart' ya lo tiene.
-// import 'package:safepay/core/constants/app_routes.dart';
+import 'package:safepay/core/security/biometric_auth_service.dart'; // Importado
+import 'package:safepay/core/security/secure_storage_service.dart'; // Importado
 // Asumimos que _CloudClipper está en 'onboarding_screen.dart'
 import 'package:safepay/features/onboarding/presentation/onboarding_screen.dart';
 
@@ -84,35 +84,55 @@ class _SendAuthScreenState extends ConsumerState<SendAuthScreen> {
   }
 
   void _confirmTransaction({bool usePin = false}) async {
-    // 1. Simular la validación (si es PIN)
+    bool isAuthenticated = false;
+
+    // 1. Autenticación
     if (usePin) {
-      if (_pin != '111111') {
-        // PIN de prueba
+      // Simulación de validación de PIN
+      if (_pin == '111111') {
+        isAuthenticated = true;
+      } else {
         setState(() => _pin = '');
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('PIN incorrecto.')),
+          const SnackBar(content: Text('Incorrect PIN.')),
+        );
+        return;
+      }
+    } else {
+      // Autenticación Biométrica Real
+      final biometricService = ref.read(biometricAuthServiceProvider);
+      isAuthenticated = await biometricService.authenticate(
+        reason: 'Authenticate to confirm sending funds',
+      );
+      
+      if (!isAuthenticated) {
+         ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Authentication failed.')),
         );
         return;
       }
     }
 
-    // 2. Llamar a la lógica de envío final
-    final success =
-        await ref.read(sendNotifierProvider.notifier).confirmFinalTransaction();
+    if (isAuthenticated) {
+      // 2. Llamar a la lógica de envío final (que usará el token seguro)
+      final success = await ref
+          .read(sendNotifierProvider.notifier)
+          .confirmFinalTransaction();
 
-    if (success && mounted) {
-      // 3. Éxito
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Transacción enviada con éxito.')),
-      );
-      // 'AppRoutes' ahora es reconocido gracias a 'global_providers.dart'
-      context.goNamed(AppRoutes.chatName);
-    } else if (mounted) {
-      // 4. Fallo
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('La transacción falló. Intenta de nuevo.')),
-      );
+      if (success && mounted) {
+        // 3. Éxito
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Transaction successfully sent!')),
+        );
+        // 'AppRoutes' ahora es reconocido gracias a 'global_providers.dart'
+        context.goNamed(AppRoutes.chatName);
+      } else if (mounted) {
+        // 4. Fallo
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Transaction failed. Please try again.')),
+        );
+      }
     }
   }
 
@@ -154,13 +174,21 @@ class _SendAuthScreenState extends ConsumerState<SendAuthScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 32.0),
               child: Column(
                 children: [
-                  const SizedBox(height: 20),
+                   const SizedBox(height: 20),
+                  Text(
+                    'Sending ${CurrencyFormatter.formatYield(amount)} USDC',
+                    style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary),
+                  ),
+                   const SizedBox(height: 10),
                   Text(
                     'Gas Rate: ${CurrencyFormatter.formatYield(0.0)} USDC',
                     style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary),
+                        color: AppColors.textSecondary),
                   ),
                   const SizedBox(height: 10),
                   const Text(
@@ -208,23 +236,37 @@ class _SendAuthScreenState extends ConsumerState<SendAuthScreen> {
                         // Huella (Simulación)
                         GestureDetector(
                           onTap: () => _confirmTransaction(usePin: false),
-                          child: const Icon(Icons.fingerprint,
-                              size: 100, color: AppColors.textPrimary),
+                          child: Container(
+                             padding: const EdgeInsets.all(20),
+                             decoration: BoxDecoration(
+                               shape: BoxShape.circle,
+                               border: Border.all(color: AppColors.primary, width: 2)
+                             ),
+                             child: const Icon(Icons.fingerprint,
+                                size: 80, color: AppColors.primary),
+                          ),
                         ),
-                        const SizedBox(height: 50),
+                        const SizedBox(height: 20),
+                         const Text(
+                          'Touch ID Sensor',
+                           style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.bold),
+                         ),
+                        const SizedBox(height: 40),
                         ElevatedButton(
                           onPressed: () => _togglePinMode(),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.accent,
-                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.white,
+                            foregroundColor: AppColors.textPrimary,
+                             elevation: 0,
+                             side: const BorderSide(color: AppColors.textSecondary),
                             padding: const EdgeInsets.symmetric(
                                 vertical: 16, horizontal: 30),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
                           ),
-                          child: const Text('Confirm with PIN',
+                          child: const Text('Use PIN instead',
                               style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
                         ),
                       ],
                     ),
