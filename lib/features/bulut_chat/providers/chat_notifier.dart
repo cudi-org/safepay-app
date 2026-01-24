@@ -22,20 +22,35 @@ class ChatNotifier extends StateNotifier<List<ChatMessage>> {
           ),
         ]);
 
-  // Simula la llamada a la IA para detectar la intención de pago
+  // Detecta la intención de pago usando la IA real (Bulut/Gemini)
   Future<PaymentJsonModel> _detectPaymentIntent(String message) async {
-    // ... (tu lógica de detección está bien) ...
-    if (message.toLowerCase().contains('pay') ||
-        message.toLowerCase().contains('pagar')) {
-      await Future.delayed(const Duration(seconds: 1));
+    try {
+      final response = await _apiClient.detectPayment(message);
+      
+      // Asumimos que la respuesta tiene la estructura { "intent": "payment", "amount": ..., "recipient": ... }
+      // O null si no es pago.
+      
+      // Mapeamos la respuesta al modelo
+      // Nota: Ajusta las claves según lo que realmente devuelva tu Worker
+      if (response['intent'] == 'payment' || response['intent'] == 'subscription') {
+         return PaymentJsonModel(
+          paymentDetected: true,
+          recipientAlias: response['recipient'] ?? '',
+          amount: (response['amount'] ?? 0.0).toDouble(),
+          memo: response['memo'] ?? message,
+        );
+      }
+      
       return PaymentJsonModel(
-        paymentDetected: true,
-        recipientAlias: '@freejournalist',
-        amount: 15.00,
-        memo: message,
+        paymentDetected: false, 
+        memo: message // Usamos el mensaje original como contexto
       );
+      
+    } catch (e) {
+      // Si falla la IA, asumimos que no es pago por seguridad
+      print('AI Error: $e');
+      return PaymentJsonModel(paymentDetected: false);
     }
-    return PaymentJsonModel(paymentDetected: false);
   }
 
   // Enviar mensaje del usuario

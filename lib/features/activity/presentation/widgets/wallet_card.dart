@@ -14,11 +14,13 @@ class _WalletActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
+  final bool isDisabled;
 
   const _WalletActionButton({
     required this.icon,
     required this.label,
     required this.onTap,
+    this.isDisabled = false,
   });
 
   @override
@@ -26,27 +28,38 @@ class _WalletActionButton extends StatelessWidget {
     return Column(
       children: [
         InkWell(
-          onTap: onTap,
+          onTap: isDisabled ? null : onTap,
           borderRadius: BorderRadius.circular(30),
           child: Container(
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: isDisabled ? Colors.grey.shade200 : Colors.white,
               shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.textPrimary.withOpacity(0.1),
-                  blurRadius: 6,
-                ),
-              ],
+              boxShadow: isDisabled
+                  ? []
+                  : [
+                      BoxShadow(
+                        color: AppColors.textPrimary.withOpacity(0.1),
+                        blurRadius: 6,
+                      ),
+                    ],
             ),
-            child: Icon(icon, color: AppColors.textPrimary, size: 24),
+            child: Icon(
+              icon,
+              color: isDisabled ? AppColors.disabled : AppColors.textPrimary,
+              size: 24,
+            ),
           ),
         ),
         const SizedBox(height: 4),
-        Text(label,
-            style: const TextStyle(color: AppColors.textPrimary, fontSize: 14)),
+        Text(
+          label,
+          style: TextStyle(
+            color: isDisabled ? AppColors.disabled : AppColors.textPrimary,
+            fontSize: 14,
+          ),
+        ),
       ],
     );
   }
@@ -225,8 +238,9 @@ class _WalletCardState extends ConsumerState<WalletCard> {
               _WalletActionButton(
                 icon: Icons.add,
                 label: 'Buy',
+                isDisabled: true, // Deshabilitado para el Hackathon
                 onTap: () {
-                  // Lógica de On-Ramp
+                  // Lógica de On-Ramp (Futuro)
                 },
               ),
               _WalletActionButton(

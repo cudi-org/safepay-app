@@ -4,13 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:safepay/core/constants/app_colors.dart';
 import 'package:safepay/core/constants/app_routes.dart';
 
-// --- IMPORTACIONES CORREGIDAS ---
-// 1. Importa el WIDGET de la burbuja
 import 'package:safepay/features/bulut_chat/presentation/widgets/chat_message_bubble.dart';
-// 2. Importa el NOTIFIER (para el provider)
 import 'package:safepay/features/bulut_chat/providers/chat_notifier.dart';
-// 3. Importa el MODELO (para saber qué es un 'ChatMessage')
 import 'package:safepay/features/bulut_chat/models/chat_message_model.dart';
+import 'package:safepay/features/home/presentation/widgets/custom_bottom_nav_bar.dart';
 
 // El chat se implementa dentro de un widget de Shell para la navegación inferior
 
@@ -218,93 +215,4 @@ class __MessageInputBarState extends ConsumerState<_MessageInputBar> {
   }
 }
 
-// === BARRA DE NAVEGACIÓN (LA CLASE QUE DA EL ERROR) ===
-// Esta clase SÍ está definida aquí.
-// 'activity_screen.dart' ahora podrá encontrarla.
-
-class CustomBottomNavBar extends StatelessWidget {
-  final int currentIndex;
-
-  const CustomBottomNavBar({super.key, required this.currentIndex});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 70 + MediaQuery.of(context).padding.bottom,
-      decoration: const BoxDecoration(
-        color: AppColors.textPrimary, // Color Oscuro
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
-        ),
-      ),
-      padding: EdgeInsets.only(
-          top: 8, bottom: MediaQuery.of(context).padding.bottom),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _NavBarItem(
-            icon: Icons.home,
-            label: 'Home',
-            isSelected: currentIndex == 0,
-            onTap: () =>
-                context.goNamed(AppRoutes.activityName), // Home (Activity)
-          ),
-          _NavBarItem(
-            icon: Icons.cloud,
-            label: 'Bulut',
-            isSelected: currentIndex == 1,
-            onTap: () => context.goNamed(AppRoutes.chatName), // Bulut (Chat)
-          ),
-          _NavBarItem(
-            icon: Icons.settings,
-            label: 'Settings',
-            isSelected: currentIndex == 2,
-            onTap: () => context
-                .goNamed(AppRoutes.settingsName), // Settings (Placeholder)
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _NavBarItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _NavBarItem({
-    required this.icon,
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isSelected
-                ? AppColors.primary
-                : AppColors.disabled, // Verde agua si seleccionado
-            size: 28,
-          ),
-          Text(
-            label,
-            style: TextStyle(
-              color: isSelected ? AppColors.primary : AppColors.disabled,
-              fontSize: 10,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// La barra de navegación se importa desde features/home/presentation/widgets/custom_bottom_nav_bar.dart

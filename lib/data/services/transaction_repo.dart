@@ -2,48 +2,59 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:safepay/data/models/transaction_model.dart';
+import 'package:safepay/data/models/user_model.dart';
+import 'package:safepay/data/services/api_client.dart';
 
-// 1. LA CLASE QUE FALTABA (TransactionRepository)
+// 1. Repositorio Real
 class TransactionRepository {
-  // Este es el método que tu 'ActivityNotifier' está intentando llamar
-  Future<List<TransactionModel>> fetchTransactionHistory(String userId) async {
-    // Simula un retraso de red para que parezca real
-    await Future.delayed(const Duration(milliseconds: 700));
+  final ApiClient _apiClient;
 
-    // Simulación de datos (Mock)
-    // Usamos el constructor 'const' que acabamos de añadir a TransactionModel
-    return [
-      TransactionModel(
-        id: 'tx-003',
-        type: TransactionType.yieldGain,
-        amount: 2.12,
-        counterpartyAlias: '@safepay_yield',
-        timestamp: DateTime(2025, 11, 1),
-        status: 'Completed',
-      ),
-      TransactionModel(
-        id: 'tx-002',
-        type: TransactionType.sent,
-        amount: -50.0,
-        counterpartyAlias: '@genzo',
-        timestamp: DateTime(2025, 10, 28, 14, 30),
-        status: 'Completed',
-      ),
-      TransactionModel(
-        id: 'tx-001',
-        type: TransactionType.deposit,
-        amount: 550.0,
-        counterpartyAlias: '@banco_local',
-        timestamp: DateTime(2025, 10, 25, 9, 0),
-        status: 'Completed',
-      ),
-      // Añade más transacciones si quieres probar el límite de 4 en el UI
-    ];
+  TransactionRepository(this._apiClient);
+
+  /// Obtiene el usuario real desde el Backend
+  Future<UserModel> fetchUserProfile(String userId) async {
+    final data = await _apiClient.fetchUserProfile(userId);
+    // Asumimos que el JSON coincide con el modelo
+    return UserModel(
+      id: userId,
+      alias: data['alias'] ?? '@unknown',
+      walletAddress: data['walletAddress'] ?? '',
+      currentBalance: (data['balance'] ?? 0.0).toDouble(),
+      yieldSharePercent: 0, // Se calcula en el Notifier o viene del back
+    );
+  }
+
+  /// Obtiene las transacciones reales
+  Future<List<TransactionModel>> fetchTransactionHistory(String userId) async {
+    final List<dynamic> data = await _apiClient.fetchTransactions(userId);
+
+    return data.map((json) {
+      // Mapeo simple de JSON a TransactionModel
+      return TransactionModel(
+        id: json['id'] ?? 'freq-0',
+        type: _parseTransactionType(json['type']),
+        amount: (json['amount'] ?? 0.0).toDouble(),
+        counterpartyAlias: json['counterparty'] ?? 'Unknown',
+        timestamp: DateTime.parse(json['timestamp'] ?? DateTime.now().toIso8601String()),
+        status: json['status'] ?? 'Completed',
+      );
+    }).toList();
+  }
+
+  TransactionType _parseTransactionType(String? type) {
+    switch (type) {
+      case 'sent': return TransactionType.sent;
+      case 'received': return TransactionType.received;
+      case 'yieldGain': return TransactionType.yieldGain;
+      case 'deposit': return TransactionType.deposit;
+      case 'withdrawal': return TransactionType.withdrawal;
+      default: return TransactionType.sent;
+    }
   }
 }
 
-// 2. EL PROVIDER QUE FALTABA (transactionRepositoryProvider)
+// 2. Provider actualizado con inyección de ApiClient
 final transactionRepositoryProvider = Provider<TransactionRepository>((ref) {
-  // Simplemente creamos y devolvemos la instancia del repositorio
-  return TransactionRepository();
+  final apiClient = ref.watch(apiClientProvider);
+  return TransactionRepository(apiClient);
 });

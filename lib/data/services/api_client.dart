@@ -46,6 +46,30 @@ class ApiClient {
       throw UnknownException('Unknown error while registering alias.');
     }
   }
+
+  /// 👤 Obtener perfil del usuario (Balance, Wallet Address, etc.)
+  Future<Map<String, dynamic>> fetchUserProfile(String userId) async {
+    try {
+      final response = await _dio.get('/user/$userId');
+      return response.data;
+    } on DioException catch (e) {
+      throw ApiException(e.message ?? 'Network error', e.response?.statusCode);
+    } catch (e) {
+      throw UnknownException('Unknown error fetching user profile.');
+    }
+  }
+
+  /// 📜 Obtener historial de transacciones
+  Future<List<dynamic>> fetchTransactions(String userId) async {
+    try {
+      final response = await _dio.get('/user/$userId/transactions');
+      return response.data as List<dynamic>;
+    } on DioException catch (e) {
+      throw ApiException(e.message ?? 'Network error', e.response?.statusCode);
+    } catch (e) {
+      throw UnknownException('Unknown error fetching transactions.');
+    }
+  }
 }
 
 /// Provider global para inyectar el ApiClient donde se necesite.

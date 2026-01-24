@@ -77,24 +77,19 @@ class ActivityNotifier extends StateNotifier<ActivityState> {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      // 1. Simulación de carga de usuario (Asumimos un usuario logueado con $500)
-      const mockUser = UserModel(
-        id: 'user-id-123',
-        alias: '@saitama',
-        walletAddress: '0x71f9a6d223e14b939f34bf3f3ad91b1188a7dD3E',
-        currentBalance: 500.00,
-        yieldSharePercent: 60, // Se actualizará al calcular
-      );
+      // 1. Cargar perfil real del usuario
+      // TODO: Obtener el ID del AuthProvider
+      final userProfile = await _transactionRepository.fetchUserProfile('user-id-123');
 
-      // 2. Cargar transacciones del repositorio (simulado)
+      // 2. Cargar transacciones reales
       final transactions =
-          await _transactionRepository.fetchTransactionHistory(mockUser.id);
+          await _transactionRepository.fetchTransactionHistory(userProfile.id);
 
       // 3. Calcular la estimación del Yield
-      final yieldEstimate = _calculateUserMonthlyYield(mockUser.currentBalance);
-      final userShare = _getUserYieldShare(mockUser.currentBalance);
+      final yieldEstimate = _calculateUserMonthlyYield(userProfile.currentBalance);
+      final userShare = _getUserYieldShare(userProfile.currentBalance);
 
-      final finalUser = mockUser.copyWith(yieldSharePercent: userShare);
+      final finalUser = userProfile.copyWith(yieldSharePercent: userShare);
 
       state = state.copyWith(
         user: finalUser,
