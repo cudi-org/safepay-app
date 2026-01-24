@@ -1,0 +1,23 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'payment_json_model.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+PaymentJsonModel _$PaymentJsonModelFromJson(Map<String, dynamic> json) =>
+    PaymentJsonModel(
+      paymentDetected: json['paymentDetected'] as bool,
+      recipientAlias: json['recipientAlias'] as String?,
+      amount: (json['amount'] as num?)?.toDouble(),
+      memo: json['memo'] as String?,
+    );
+
+Map<String, dynamic> _$PaymentJsonModelToJson(PaymentJsonModel instance) =>
+    <String, dynamic>{
+      'paymentDetected': instance.paymentDetected,
+      'recipientAlias': instance.recipientAlias,
+      'amount': instance.amount,
+      'memo': instance.memo,
+    };

@@ -1,0 +1,35 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'transaction_model.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+TransactionModel _$TransactionModelFromJson(Map<String, dynamic> json) =>
+    TransactionModel(
+      id: json['id'] as String,
+      type: $enumDecode(_$TransactionTypeEnumMap, json['type']),
+      amount: (json['amount'] as num).toDouble(),
+      counterpartyAlias: json['counterpartyAlias'] as String,
+      timestamp: DateTime.parse(json['timestamp'] as String),
+      status: json['status'] as String,
+    );
+
+Map<String, dynamic> _$TransactionModelToJson(TransactionModel instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'type': _$TransactionTypeEnumMap[instance.type]!,
+      'amount': instance.amount,
+      'counterpartyAlias': instance.counterpartyAlias,
+      'timestamp': instance.timestamp.toIso8601String(),
+      'status': instance.status,
+    };
+
+const _$TransactionTypeEnumMap = {
+  TransactionType.deposit: 'deposit',
+  TransactionType.withdrawal: 'withdrawal',
+  TransactionType.sent: 'sent',
+  TransactionType.received: 'received',
+  TransactionType.yieldGain: 'yieldGain',
+};
