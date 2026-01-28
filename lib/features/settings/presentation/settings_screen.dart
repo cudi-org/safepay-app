@@ -2,12 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:safepay/core/constants/app_colors.dart';
-// SOLUCIÓN: Borramos esta línea, 'global_providers.dart' ya lo tiene
-// import 'package:safepay/core/constants/app_routes.dart';
 import 'package:safepay/core/providers/global_providers.dart';
 import 'package:safepay/features/activity/providers/activity_notifier.dart';
-// SOLUCIÓN: Borramos esta línea, 'global_providers.dart' ya lo tiene
-// import 'package:safepay/features/bulut_chat/presentation/chat_screen.dart'; // Para CustomBottomNavBar
 import 'package:safepay/features/settings/providers/settings_notifier.dart';
 
 // --- WIDGETS AUXILIARES ---
@@ -70,11 +66,11 @@ class _LogoutButton extends StatelessWidget {
       onTap: onLogout,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Logout',
-                style: TextStyle(
+                style: const TextStyle(
                     fontSize: 16,
                     color: AppColors.danger,
                     fontWeight: FontWeight.bold)),
@@ -100,23 +96,23 @@ class SettingsScreen extends ConsumerWidget {
       builder: (context) => AlertDialog(
         title: const Text('Disable Gas-Free Payments',
             style: TextStyle(color: AppColors.textPrimary)),
-        content: const Column(
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               '• By disabling this feature, you are responsible for paying the gas fees for each transaction.',
-              style: TextStyle(color: AppColors.textPrimary),
+              style: const TextStyle(color: AppColors.textPrimary),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               '• Your micropayments will no longer be fee-free and may incur gas fees for each subscription send or execution on the Arc Network.',
-              style: TextStyle(color: AppColors.textPrimary),
+              style: const TextStyle(color: AppColors.textPrimary),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               '• ATTENTION: Your recurring subscriptions may fail if your wallet does not have enough USDC to cover the gas fee at the time of execution.',
-              style: TextStyle(
+              style: const TextStyle(
                   color: AppColors.danger, fontWeight: FontWeight.bold),
             ),
           ],
@@ -194,7 +190,7 @@ class SettingsScreen extends ConsumerWidget {
                     const SizedBox(height: 8),
                     Text(
                       'Personal',
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary),
@@ -249,7 +245,7 @@ class SettingsScreen extends ConsumerWidget {
               // --- SECCIÓN APP ---
               Padding(
                 padding: const EdgeInsets.only(left: 24.0, bottom: 8),
-                child: Text('App',
+                child: const Text('App',
                     style: TextStyle(
                         fontSize: 18,
                         color: AppColors.textPrimary,
@@ -301,7 +297,7 @@ class SettingsScreen extends ConsumerWidget {
         ),
       ),
       bottomNavigationBar:
-          const CustomBottomNavBar(currentIndex: 2), // Pestaña Settings
+          CustomBottomNavBar(currentIndex: 2), // Pestaña Settings
     );
   }
 }

@@ -1,7 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:safepay/core/providers/global_providers.dart';
+import 'package:safepay/core/constants/app_colors.dart'; // Needed for AppColors
+import 'package:safepay/features/activity/providers/activity_notifier.dart'; // Added for activityNotifierProvider
 import 'package:safepay/features/activity/presentation/widgets/full_activity_modal.dart';
 import 'package:safepay/features/activity/presentation/widgets/wallet_card.dart';
 import 'package:safepay/features/activity/presentation/widgets/transaction_list_item.dart';
-import 'package:safepay/features/home/presentation/widgets/custom_bottom_nav_bar.dart';
 
 class NothingToSeeIllustration extends StatelessWidget {
   const NothingToSeeIllustration({super.key});
@@ -63,7 +68,6 @@ class ActivityScreen extends ConsumerWidget {
           ),
         ],
       ),
-
       body: state.isLoading
           ? const Center(
               child: CircularProgressIndicator(color: AppColors.primary))
@@ -95,9 +99,11 @@ class ActivityScreen extends ConsumerWidget {
                           GestureDetector(
                             onTap: () => _showFullActivity(context),
                             child: Padding(
-                              padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
+                              padding:
+                                  const EdgeInsets.fromLTRB(24, 32, 24, 16),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text(
                                     'Recent Activity',
@@ -113,8 +119,10 @@ class ActivityScreen extends ConsumerWidget {
                                       color: Colors.grey.withOpacity(0.1),
                                       shape: BoxShape.circle,
                                     ),
-                                    child: const Icon(Icons.arrow_forward_ios_rounded,
-                                        size: 14, color: AppColors.textPrimary),
+                                    child: const Icon(
+                                        Icons.arrow_forward_ios_rounded,
+                                        size: 14,
+                                        color: AppColors.textPrimary),
                                   ),
                                 ],
                               ),
@@ -123,14 +131,17 @@ class ActivityScreen extends ConsumerWidget {
 
                           // 3. Lista de Actividad Reciente o Vista Vacía
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 24.0),
                             child: recentTransactions.isEmpty
                                 ? const _EmptyActivityView()
                                 : Column(
                                     children: recentTransactions.map((tx) {
                                       return Padding(
-                                        padding: const EdgeInsets.only(bottom: 8.0),
-                                        child: TransactionListItem(transaction: tx),
+                                        padding:
+                                            const EdgeInsets.only(bottom: 8.0),
+                                        child: TransactionListItem(
+                                            transaction: tx),
                                       );
                                     }).toList(),
                                   ),
@@ -167,12 +178,10 @@ class _EmptyActivityView extends StatelessWidget {
                 letterSpacing: 0.5),
           ),
           const SizedBox(height: 8),
-           const Text(
+          const Text(
             'Start by adding funds or making a request.',
             textAlign: TextAlign.center,
-            style: TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 14),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
           ),
           const SizedBox(height: 24),
         ],

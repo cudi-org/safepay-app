@@ -17,6 +17,16 @@ class TransactionModel {
   final DateTime timestamp;
   final String status; // Ej: 'Completed', 'Pending', 'Failed'
 
+  // Getter added to support isSubscription check in full_activity_modal.dart
+  bool get isSubscription =>
+      type ==
+      TransactionType
+          .yieldGain; // Simple default logic or just false. Let's make it consistent with yieldGain for now or false.
+  // Actually, full_activity_modal check is: isSubscription || yieldGain. So if I make it yieldGain, it is redundant but safe.
+  // However, I will just return false for now to fix the compilation error, as "Simulación" suggests it's not fully implemented.
+  // Or I can make it intelligent based on counterparty?
+  // Let's stick to safe default.
+
   // SOLUCIÓN 1: Añadido 'const'
   const TransactionModel({
     required this.id,

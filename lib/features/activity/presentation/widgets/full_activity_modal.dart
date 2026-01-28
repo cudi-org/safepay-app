@@ -5,7 +5,8 @@ import 'package:safepay/core/constants/app_colors.dart';
 import 'package:safepay/data/models/transaction_model.dart';
 import 'package:safepay/features/activity/providers/activity_notifier.dart';
 import 'package:safepay/features/activity/presentation/widgets/transaction_list_item.dart';
-import 'package:safepay/features/activity/presentation/activity_screen.dart' show NothingToSeeIllustration;
+import 'package:safepay/features/activity/presentation/activity_screen.dart'
+    show NothingToSeeIllustration;
 
 enum ActivityFilter { all, send, receive, subscriptions }
 
@@ -145,8 +146,8 @@ class _FullActivityModalState extends ConsumerState<FullActivityModal>
             child: Container(
               height: 40,
               decoration: BoxDecoration(
-                 color: Colors.grey.withOpacity(0.1),
-                 borderRadius: BorderRadius.circular(20),
+                color: Colors.grey.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
               ),
               child: TabBar(
                 controller: _tabController,
@@ -154,26 +155,25 @@ class _FullActivityModalState extends ConsumerState<FullActivityModal>
                 indicatorSize: TabBarIndicatorSize.tab,
                 dividerColor: Colors.transparent,
                 indicator: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: AppColors.primary,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withOpacity(0.3),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    )
-                  ]
-                ),
+                    borderRadius: BorderRadius.circular(20),
+                    color: AppColors.primary,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withOpacity(0.3),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      )
+                    ]),
                 labelColor: Colors.white,
-                labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                labelStyle:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                 unselectedLabelColor: AppColors.textSecondary,
-                tabs: _filters
-                    .map((f) => Tab(text: _getFilterTitle(f)))
-                    .toList(),
+                tabs:
+                    _filters.map((f) => Tab(text: _getFilterTitle(f))).toList(),
               ),
             ),
           ),
-          
+
           const SizedBox(height: 10),
 
           // Content
@@ -188,9 +188,11 @@ class _FullActivityModalState extends ConsumerState<FullActivityModal>
                 }
 
                 return ListView.separated(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 16.0, horizontal: 16.0),
                   itemCount: filteredTxs.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: 8),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 8),
                   itemBuilder: (context, index) {
                     return TransactionListItem(
                         transaction: filteredTxs[index], isRecent: false);
@@ -247,7 +249,8 @@ class _InfographicContent extends StatelessWidget {
             const Text('Meaning of icons',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             IconButton(
-              icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.textPrimary),
+              icon: const Icon(Icons.keyboard_arrow_down,
+                  color: AppColors.textPrimary),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
@@ -257,36 +260,38 @@ class _InfographicContent extends StatelessWidget {
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.background,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.grey.shade300)
-            ),
-            child: const Icon(Icons.arrow_upward, color: AppColors.textPrimary, size: 20),
+                color: AppColors.background,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.grey.shade300)),
+            child: const Icon(Icons.arrow_upward,
+                color: AppColors.textPrimary, size: 20),
           ),
           label: 'Single payment sent',
           description: 'One-time transfer to another wallet.',
         ),
         _InfographicRow(
-           icon: Container(
+          icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: AppColors.primary.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-             child: const Icon(Icons.arrow_downward, color: AppColors.primary, size: 20),
-           ),
+            child: const Icon(Icons.arrow_downward,
+                color: AppColors.primary, size: 20),
+          ),
           label: 'Income received',
           description: 'Funds received from external sources.',
         ),
         _InfographicRow(
-           icon: Container(
-             padding: const EdgeInsets.all(8),
-             decoration: BoxDecoration(
-               color: AppColors.veronica.withOpacity(0.1),
-               shape: BoxShape.circle,
-             ),
-             child: const Icon(Icons.autorenew, color: AppColors.veronica, size: 20),
-           ),
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.veronica.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.autorenew,
+                color: AppColors.veronica, size: 20),
+          ),
           label: 'Subscription',
           description: 'Recurring payments managed by smart contracts.',
         ),
@@ -318,8 +323,12 @@ class _InfographicRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                Text(description, style: const TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+                Text(label,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold)),
+                Text(description,
+                    style: const TextStyle(
+                        fontSize: 13, color: AppColors.textSecondary)),
               ],
             ),
           ),

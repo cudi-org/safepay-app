@@ -43,7 +43,7 @@ class ActivityNotifier extends StateNotifier<ActivityState> {
   final TransactionRepository _transactionRepository;
 
   ActivityNotifier(this._transactionRepository) : super(const ActivityState()) {
-    _loadInitialData();
+    fetchActivity();
   }
 
   // --- LÓGICA DE SOSTENIBILIDAD (Modelo Progresivo) ---
@@ -73,20 +73,22 @@ class ActivityNotifier extends StateNotifier<ActivityState> {
 
   // --- LÓGICA DE CARGA DE DATOS ---
 
-  Future<void> _loadInitialData() async {
+  Future<void> fetchActivity() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
       // 1. Cargar perfil real del usuario
       // TODO: Obtener el ID del AuthProvider
-      final userProfile = await _transactionRepository.fetchUserProfile('user-id-123');
+      final userProfile =
+          await _transactionRepository.fetchUserProfile('user-id-123');
 
       // 2. Cargar transacciones reales
       final transactions =
           await _transactionRepository.fetchTransactionHistory(userProfile.id);
 
       // 3. Calcular la estimación del Yield
-      final yieldEstimate = _calculateUserMonthlyYield(userProfile.currentBalance);
+      final yieldEstimate =
+          _calculateUserMonthlyYield(userProfile.currentBalance);
       final userShare = _getUserYieldShare(userProfile.currentBalance);
 
       final finalUser = userProfile.copyWith(yieldSharePercent: userShare);

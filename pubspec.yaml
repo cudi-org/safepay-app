@@ -5,35 +5,36 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=2.19.6 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
 
   # --- Paquetes de Arquitectura y Estado ---
-  flutter_riverpod: ^2.5.1      # Gestión de estado (Notifiers/Providers)
-  go_router: ^14.0.0            # Navegación (Gestión de rutas)
+  flutter_riverpod: ^2.3.6      # Downgraded for Dart 2.19 compatibility
+  go_router: ^10.0.0            # Downgraded for Dart 2.19 compatibility
   
   # --- Serialización de Datos (CRÍTICO para los modelos) ---
-  json_annotation: ^4.8.1       # Anotaciones para la serialización JSON
+  json_annotation: ^4.8.1
   
   # --- Utilidades y Formato ---
-  intl: ^0.19.0                 # Formato de números y fechas (Moneda, formatYield)
-  dio: ^5.4.3                   # Cliente HTTP para las APIs (FastAPI, Circle, etc.)
+  intl: ^0.18.1                 # Downgraded for compatibility
+  dio: ^5.3.0
   
   # --- UI y UX (Necesarios para el diseño) ---
-  local_auth: ^2.2.0            # Autenticación biométrica (Huella/Face ID)
-  qr_flutter: ^4.1.0            # Generación de códigos QR (Para la WalletCard)
+  local_auth: ^2.1.6
+  qr_flutter: ^4.1.0
+  flutter_secure_storage: ^4.2.0  # Downgraded to avoid V2 embedding requirement
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^2.0.3         # Downgraded for compatibility
   
   # --- Generación de Código (CRÍTICO) ---
-  build_runner: ^2.4.9          # Herramienta para ejecutar los code generators
-  json_serializable: ^6.8.0     # Generador de código para la serialización JSON
+  build_runner: ^2.3.3
+  json_serializable: ^6.6.0
 
 flutter:
   uses-material-design: true

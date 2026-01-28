@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:safepay/core/constants/app_colors.dart';
 // SOLUCIÓN 1: Se elimina la importación duplicada de 'app_routes.dart'
-// import 'package:safepay/core/constants/app_routes.dart';
+// import 'package:safepay/core/providers/global_providers.dart'; // Replaces app_routes.dart
 import 'package:safepay/core/providers/global_providers.dart';
 import 'package:safepay/features/onboarding/presentation/onboarding_screen.dart';
 

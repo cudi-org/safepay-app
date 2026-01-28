@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:safepay/core/constants/app_colors.dart';
-import 'package:safepay/core/constants/app_routes.dart';
+import 'package:safepay/core/providers/global_providers.dart'; // Replaces app_routes.dart
 
 // --- WIDGETS DE ONBOARDING ---
 

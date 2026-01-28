@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:safepay/core/constants/app_colors.dart';
-import 'package:safepay/core/constants/app_routes.dart';
+import 'package:safepay/core/providers/global_providers.dart'; // Source of AppRoutes and CustomBottomNavBar
 
 import 'package:safepay/features/bulut_chat/presentation/widgets/chat_message_bubble.dart';
 import 'package:safepay/features/bulut_chat/providers/chat_notifier.dart';
 import 'package:safepay/features/bulut_chat/models/chat_message_model.dart';
-import 'package:safepay/features/home/presentation/widgets/custom_bottom_nav_bar.dart';
 
 // El chat se implementa dentro de un widget de Shell para la navegación inferior
 

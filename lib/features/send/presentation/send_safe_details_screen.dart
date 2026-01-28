@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:safepay/core/constants/app_colors.dart';
 // Importa las rutas desde su nuevo archivo centralizado
-import 'package:safepay/core/constants/app_routes.dart';
+import 'package:safepay/core/providers/global_providers.dart'; // Replaces app_routes.dart
 import 'package:safepay/features/send/providers/send_notifier.dart';
 import 'package:safepay/utils/currency_formatter.dart';
 import 'package:intl/intl.dart';
