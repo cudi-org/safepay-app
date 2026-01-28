@@ -176,11 +176,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const WelcomeScreen(),
       ),
       GoRoute(
-        path: AppRoutes.safetySummary,
-        name: AppRoutes.safetySummaryName,
-        builder: (context, state) => const SafetySummaryScreen(),
-      ),
-      GoRoute(
         path: AppRoutes.termsAndConditions,
         name: AppRoutes.termsAndConditionsName,
         builder: (context, state) => const TermsAndConditionsScreen(),
@@ -270,7 +265,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       final bool isAuthPath =
           location == AppRoutes.biometricAuth || location == AppRoutes.pinAuth;
       final bool isInitialOnboardingPath = location == AppRoutes.welcome ||
-          location == AppRoutes.safetySummary ||
           location == AppRoutes.termsAndConditions ||
           location == AppRoutes.configureAccess;
       final bool isSetupPath = location == AppRoutes.pinSetup ||

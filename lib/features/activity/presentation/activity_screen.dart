@@ -12,18 +12,55 @@ class NothingToSeeIllustration extends StatelessWidget {
   const NothingToSeeIllustration({super.key});
   @override
   Widget build(BuildContext context) {
-    // Usamos el color de la nube púrpura 9747FF (Veronica) para el avatar/ilustración
-    return Container(
-      width: 120,
-      height: 120,
-      decoration: BoxDecoration(
-        color: AppColors.veronica.withOpacity(0.1),
-        shape: BoxShape.circle,
-      ),
-      child: const Icon(Icons.cloud_off_rounded,
-          size: 60, color: AppColors.veronica),
+    // Ilustración estilo "Bulut" (Nube con personaje)
+    // Como placeholder, usamos un diseño compuesto
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          width: 120,
+          height: 120,
+          decoration: BoxDecoration(
+            color: AppColors.nonPhotoBlue.withValues(alpha: 0.3),
+            shape: BoxShape.circle,
+          ),
+        ),
+        Icon(Icons.cloud, size: 80, color: AppColors.nonPhotoBlue),
+        Positioned(
+          bottom: 20,
+          child: Icon(Icons.person, size: 40, color: AppColors.textPrimary),
+        ),
+      ],
     );
   }
+}
+
+// --- CURVED HEADER PAINTER ---
+class _HeaderCurveClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+    path.lineTo(0, size.height - 50); // Start from bottom-left (minus curve)
+
+    var firstControlPoint = Offset(size.width / 4, size.height);
+    var firstEndPoint = Offset(size.width / 2.25, size.height - 30);
+    path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy,
+        firstEndPoint.dx, firstEndPoint.dy);
+
+    var secondControlPoint =
+        Offset(size.width - (size.width / 3.25), size.height - 80);
+    var secondEndPoint = Offset(size.width, size.height - 40);
+    path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy,
+        secondEndPoint.dx, secondEndPoint.dy);
+
+    path.lineTo(size.width, size.height - 40);
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
 
 // --- WIDGET PRINCIPAL ---
@@ -53,70 +90,82 @@ class ActivityScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
+      extendBodyBehindAppBar:
+          true, // Permite que el cuerpo suba detrás del AppBar
       appBar: AppBar(
-        // Icono de Notificaciones (Campana - Pág 24)
-        backgroundColor: AppColors.background,
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        // El icono de notificación debe ser oscuro según el diseño, pero sobre fondo verde...
+        // En el diseño parece negro/oscuro.
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_none_rounded,
+            icon: const Icon(Icons.notifications, // Filled icon
                 color: AppColors.textPrimary),
             onPressed: () {
-              // Redirección al placeholder de notificaciones
               context.pushNamed(AppRoutes.notificationsName);
             },
           ),
         ],
       ),
-      body: state.isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: AppColors.primary))
-          : RefreshIndicator(
-              onRefresh: () => _refreshActivity(ref),
+      body: Stack(
+        children: [
+          // 1. Fondo Curvo Verde
+          ClipPath(
+            clipper: _HeaderCurveClipper(),
+            child: Container(
+              height: 280, // Altura suficiente para el overlap
+              width: double.infinity,
               color: AppColors.primary,
-              backgroundColor: AppColors.backgroundLight,
-              child: state.errorMessage != null
-                  ? ListView(
-                      children: [
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.8,
-                          child: Center(child: Text(state.errorMessage!)),
-                        )
-                      ],
-                    )
-                  : SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // 1. Tarjeta de Billetera y Acciones (Pág 12/16)
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24.0),
-                            child: WalletCard(),
-                          ),
+            ),
+          ),
 
-                          // 2. Título de Actividad Reciente
-                          GestureDetector(
-                            onTap: () => _showFullActivity(context),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(24, 32, 24, 16),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    'Recent Activity',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
-                                    ),
-                                  ),
-                                  Container(
+          // 2. Contenido Scrolleable (Tarjeta + Lista)
+          state.isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(color: Colors.white))
+              : RefreshIndicator(
+                  onRefresh: () => _refreshActivity(ref),
+                  color: AppColors.primary,
+                  backgroundColor: Colors.white,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).padding.top +
+                          kToolbarHeight +
+                          10,
+                      bottom: 100, // Espacio para NavBar
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 1. Tarjeta de Billetera (Overlapping)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 24.0),
+                          child: WalletCard(),
+                        ),
+
+                        // 2. Título de Actividad Reciente
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Recent Activity',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                              // Flecha oculta si está vacío, o siempre visible
+                              if (recentTransactions.isNotEmpty)
+                                GestureDetector(
+                                  onTap: () => _showFullActivity(context),
+                                  child: Container(
                                     padding: const EdgeInsets.all(4),
                                     decoration: BoxDecoration(
-                                      color: Colors.grey.withOpacity(0.1),
+                                      color: Colors.grey.withValues(alpha: 0.1),
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(
@@ -124,34 +173,33 @@ class ActivityScreen extends ConsumerWidget {
                                         size: 14,
                                         color: AppColors.textPrimary),
                                   ),
-                                ],
-                              ),
-                            ),
+                                ),
+                            ],
                           ),
+                        ),
 
-                          // 3. Lista de Actividad Reciente o Vista Vacía
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 24.0),
-                            child: recentTransactions.isEmpty
-                                ? const _EmptyActivityView()
-                                : Column(
-                                    children: recentTransactions.map((tx) {
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 8.0),
-                                        child: TransactionListItem(
-                                            transaction: tx),
-                                      );
-                                    }).toList(),
-                                  ),
-                          ),
-
-                          const SizedBox(height: 100), // Espacio para la NavBar
-                        ],
-                      ),
+                        // 3. Lista de Actividad Reciente o Vista Vacía
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                          child: recentTransactions.isEmpty
+                              ? const _EmptyActivityView()
+                              : Column(
+                                  children: recentTransactions.map((tx) {
+                                    return Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 12.0),
+                                      child:
+                                          TransactionListItem(transaction: tx),
+                                    );
+                                  }).toList(),
+                                ),
+                        ),
+                      ],
                     ),
-            ),
+                  ),
+                ),
+        ],
+      ),
     );
   }
 }
@@ -165,25 +213,21 @@ class _EmptyActivityView extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-          const SizedBox(height: 20),
-          const NothingToSeeIllustration(), // Placeholder para la ilustración de la nube
-          const SizedBox(height: 16),
+          const SizedBox(height: 40),
+          const NothingToSeeIllustration(),
+          const SizedBox(height: 24),
           const Text(
             'YOUR WALLET IS READY!\nIT\'S BULUT TIME',
             textAlign: TextAlign.center,
             style: TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.5),
+                color: AppColors.textPrimary, // Texto Oscuro
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 1.2),
           ),
-          const SizedBox(height: 8),
-          const Text(
-            'Start by adding funds or making a request.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
-          ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
+          // El diseño muestra el texto principal en mayúsculas y espaciado.
+          // El subtítulo "Start by..." no aparece en el diseño proporcionado, pero lo mantenemos sutil.
         ],
       ),
     );

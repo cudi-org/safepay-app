@@ -157,198 +157,217 @@ class _SendSafeScreenState extends ConsumerState<SendSafeScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Send a Safe',
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary)),
-                  IconButton(
-                    icon: const Icon(Icons.close, color: AppColors.textPrimary),
-                    onPressed: () => context.pop(),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
+                ),
+                child: IntrinsicHeight(
+                  child: Column(
+                    children: [
+                      // Header
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Send a Safe',
+                                style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.textPrimary)),
+                            IconButton(
+                              icon: const Icon(Icons.close,
+                                  color: AppColors.textPrimary),
+                              onPressed: () => context.pop(),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Wallet Card (Página 18)
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 8),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.textPrimary,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          children: [
+                            const Icon(Icons.cloud_queue,
+                                color: AppColors.primary, size: 30),
+                            const SizedBox(height: 4),
+                            const Text('Wallet',
+                                style: TextStyle(
+                                    color: AppColors.disabled, fontSize: 12)),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}',
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Sección Recientes (Página 18/19)
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(left: 16, right: 16, top: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Recent',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.textPrimary)),
+                            IconButton(
+                              icon: const Icon(Icons.search,
+                                  color: AppColors.textPrimary),
+                              onPressed: () {
+                                // Simular búsqueda de alias
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Lista de contactos recientes
+                      SizedBox(
+                        height: 80,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          children: [
+                            // Botón Agregar
+                            _RecipientItem(
+                              recipient: Recipient(alias: 'Add'),
+                              color: AppColors.textPrimary,
+                              icon: Icons.add,
+                              onTap: () {/* Lógica de Agregar */},
+                            ),
+                            ...recentContacts
+                                .map((contact) => _RecipientItem(
+                                      recipient: contact,
+                                      color: AppColors.veronica,
+                                      icon: contact.alias == '@freejournalist'
+                                          ? Icons.person
+                                          : Icons.group,
+                                      onTap: () => _selectRecipient(contact),
+                                    ))
+                                .toList(),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Monto (Página 18)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                        child: RichText(
+                          text: TextSpan(
+                            // SOLUCIÓN 2: Eliminado el '.padRight(5, '0')'
+                            text: _amountController.text,
+                            style: const TextStyle(
+                                fontSize: 36,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textPrimary),
+                            children: const [
+                              TextSpan(
+                                text: ' USDC',
+                                style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.normal,
+                                    color: AppColors.textSecondary),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'Your balance: $availableBalance USDC (available)',
+                        style: const TextStyle(
+                            fontSize: 14, color: AppColors.textSecondary),
+                      ),
+
+                      const Spacer(),
+
+                      // Teclado Numérico (4x3)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        color: Colors.white,
+                        child: GridView.count(
+                          crossAxisCount: 3,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                          childAspectRatio: 2.0,
+                          children: [
+                            ...['1', '2', '3', '4', '5', '6', '7', '8', '9']
+                                .map((key) => _NumericKeypadButton(
+                                      text: key,
+                                      onPressed: () => _handleKeypadInput(key),
+                                    )),
+                            _NumericKeypadButton(
+                              text: '.',
+                              onPressed: () => _handleKeypadInput('.'),
+                            ),
+                            _NumericKeypadButton(
+                              text: '0',
+                              onPressed: () => _handleKeypadInput('0'),
+                            ),
+                            _NumericKeypadButton(
+                              text: 'delete',
+                              icon: Icons.backspace_outlined,
+                              isDelete: true,
+                              onPressed: () => _handleKeypadInput('delete'),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Botón Send (Página 18/19)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 24, right: 24, top: 16, bottom: 20),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: isAmountValid &&
+                                    state.mainRecipient != null
+                                ? () =>
+                                    context.pushNamed(AppRoutes.sendDetailsName)
+                                : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.accent,
+                              foregroundColor: Colors.white,
+                              disabledBackgroundColor: AppColors.disabled,
+                              padding: const EdgeInsets.symmetric(vertical: 18),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                            ),
+                            child: Text(
+                              // El botón ahora se actualiza con el valor del provider
+                              'Send ${CurrencyFormatter.formatYield(state.amount)} USDC',
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-
-            // Wallet Card (Página 18)
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.textPrimary,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                children: [
-                  const Icon(Icons.cloud_queue,
-                      color: AppColors.primary, size: 30),
-                  const SizedBox(height: 4),
-                  const Text('Wallet',
-                      style:
-                          TextStyle(color: AppColors.disabled, fontSize: 12)),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}',
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
-
-            // Sección Recientes (Página 18/19)
-            Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Recent',
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary)),
-                  IconButton(
-                    icon:
-                        const Icon(Icons.search, color: AppColors.textPrimary),
-                    onPressed: () {
-                      // Simular búsqueda de alias
-                    },
-                  ),
-                ],
-              ),
-            ),
-
-            // Lista de contactos recientes
-            SizedBox(
-              height: 80,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: [
-                  // Botón Agregar
-                  _RecipientItem(
-                    recipient: Recipient(alias: 'Add'),
-                    color: AppColors.textPrimary,
-                    icon: Icons.add,
-                    onTap: () {/* Lógica de Agregar */},
-                  ),
-                  ...recentContacts
-                      .map((contact) => _RecipientItem(
-                            recipient: contact,
-                            color: AppColors.veronica,
-                            icon: contact.alias == '@freejournalist'
-                                ? Icons.person
-                                : Icons.group,
-                            onTap: () => _selectRecipient(contact),
-                          ))
-                      .toList(),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Monto (Página 18)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: RichText(
-                text: TextSpan(
-                  // SOLUCIÓN 2: Eliminado el '.padRight(5, '0')'
-                  text: _amountController.text,
-                  style: const TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary),
-                  children: const [
-                    TextSpan(
-                      text: ' USDC',
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.normal,
-                          color: AppColors.textSecondary),
-                    ),
-                  ],
                 ),
               ),
-            ),
-            Text(
-              'Your balance: $availableBalance USDC (available)',
-              style:
-                  const TextStyle(fontSize: 14, color: AppColors.textSecondary),
-            ),
-
-            const Spacer(),
-
-            // Teclado Numérico (4x3)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              color: Colors.white,
-              child: GridView.count(
-                crossAxisCount: 3,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                childAspectRatio: 2.0,
-                children: [
-                  ...['1', '2', '3', '4', '5', '6', '7', '8', '9']
-                      .map((key) => _NumericKeypadButton(
-                            text: key,
-                            onPressed: () => _handleKeypadInput(key),
-                          )),
-                  _NumericKeypadButton(
-                    text: '.',
-                    onPressed: () => _handleKeypadInput('.'),
-                  ),
-                  _NumericKeypadButton(
-                    text: '0',
-                    onPressed: () => _handleKeypadInput('0'),
-                  ),
-                  _NumericKeypadButton(
-                    text: 'delete',
-                    icon: Icons.backspace_outlined,
-                    isDelete: true,
-                    onPressed: () => _handleKeypadInput('delete'),
-                  ),
-                ],
-              ),
-            ),
-
-            // Botón Send (Página 18/19)
-            Padding(
-              padding: const EdgeInsets.only(
-                  left: 24, right: 24, top: 16, bottom: 20),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: isAmountValid && state.mainRecipient != null
-                      ? () => context.pushNamed(AppRoutes.sendDetailsName)
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accent,
-                    foregroundColor: Colors.white,
-                    disabledBackgroundColor: AppColors.disabled,
-                    padding: const EdgeInsets.symmetric(vertical: 18),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: Text(
-                    // El botón ahora se actualiza con el valor del provider
-                    'Send ${CurrencyFormatter.formatYield(state.amount)} USDC',
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
