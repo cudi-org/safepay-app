@@ -33,17 +33,13 @@ class _TransactionIcon extends StatelessWidget {
         icon = Icons.autorenew; // Suscripción (Pág 15 Infographic)
         color = AppColors.veronica;
         break;
-      default:
-        icon = Icons.help_outline;
-        color = AppColors.disabled;
-        break;
     }
 
     return Container(
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         shape: BoxShape.circle,
       ),
       child: Icon(icon, color: color, size: 20),
@@ -106,7 +102,7 @@ class TransactionListItem extends StatelessWidget {
             ? null
             : [
                 BoxShadow(
-                    color: AppColors.textPrimary.withOpacity(0.05),
+                    color: AppColors.textPrimary.withValues(alpha: 0.05),
                     blurRadius: 4)
               ],
       ),

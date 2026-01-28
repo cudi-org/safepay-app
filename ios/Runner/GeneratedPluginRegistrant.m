@@ -12,17 +12,17 @@
 @import flutter_secure_storage;
 #endif
 
-#if __has_include(<local_auth_ios/FLTLocalAuthPlugin.h>)
-#import <local_auth_ios/FLTLocalAuthPlugin.h>
+#if __has_include(<local_auth_darwin/LocalAuthPlugin.h>)
+#import <local_auth_darwin/LocalAuthPlugin.h>
 #else
-@import local_auth_ios;
+@import local_auth_darwin;
 #endif
 
 @implementation GeneratedPluginRegistrant
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
   [FlutterSecureStoragePlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterSecureStoragePlugin"]];
-  [FLTLocalAuthPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTLocalAuthPlugin"]];
+  [LocalAuthPlugin registerWithRegistrar:[registry registrarForPlugin:@"LocalAuthPlugin"]];
 }
 
 @end

@@ -72,7 +72,7 @@ class SettingsState {
 }
 
 class SettingsNotifier extends StateNotifier<SettingsState> {
-  final UserModel _currentUser;
+  final UserModel? _currentUser;
   final StateController<bool> _biometricsController;
 
   SettingsNotifier(this._currentUser, this._biometricsController)
@@ -146,8 +146,9 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
 final settingsNotifierProvider =
     StateNotifierProvider<SettingsNotifier, SettingsState>((ref) {
   // Obtenemos el usuario simulado del ActivityNotifier y el controlador de biometría
+  // FIX: Allow null user while data is loading
   final currentUser =
-      ref.watch(activityNotifierProvider.select((state) => state.user!));
+      ref.watch(activityNotifierProvider.select((state) => state.user));
   final biometricsController = ref.watch(hasBiometricsProvider.notifier);
 
   return SettingsNotifier(currentUser, biometricsController);

@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:safepay/core/constants/app_colors.dart';
 import 'package:safepay/core/providers/global_providers.dart'; // Replaces app_routes.dart
 import 'package:safepay/features/activity/providers/activity_notifier.dart';
-import 'package:safepay/utils/currency_formatter.dart';
+
 import 'package:qr_flutter/qr_flutter.dart'; // Importa el paquete para el QR
 
 // --- WIDGETS AUXILIARES ---
@@ -40,7 +40,7 @@ class _WalletActionButton extends StatelessWidget {
                   ? []
                   : [
                       BoxShadow(
-                        color: AppColors.textPrimary.withOpacity(0.1),
+                        color: AppColors.textPrimary.withValues(alpha: 0.1),
                         blurRadius: 6,
                       ),
                     ],
@@ -142,7 +142,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.textPrimary.withOpacity(0.3),
+                  color: AppColors.textPrimary.withValues(alpha: 0.3),
                   blurRadius: 15,
                   offset: const Offset(0, 8),
                 ),

@@ -74,7 +74,6 @@ class _FullActivityModalState extends ConsumerState<FullActivityModal>
                 tx.type == TransactionType.yieldGain)
             .toList();
       case ActivityFilter.all:
-      default:
         return allTransactions;
     }
   }
@@ -159,7 +158,7 @@ class _FullActivityModalState extends ConsumerState<FullActivityModal>
                     color: AppColors.primary,
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primary.withOpacity(0.3),
+                        color: AppColors.textPrimary.withValues(alpha: 0.1),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       )

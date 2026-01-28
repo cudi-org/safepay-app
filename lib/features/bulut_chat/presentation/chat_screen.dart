@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:safepay/core/constants/app_colors.dart';
 import 'package:safepay/core/providers/global_providers.dart'; // Source of AppRoutes and CustomBottomNavBar
 
 import 'package:safepay/features/bulut_chat/presentation/widgets/chat_message_bubble.dart';
 import 'package:safepay/features/bulut_chat/providers/chat_notifier.dart';
-import 'package:safepay/features/bulut_chat/models/chat_message_model.dart';
 
 // El chat se implementa dentro de un widget de Shell para la navegación inferior
 
@@ -116,15 +114,25 @@ class _CloudClipperInverse extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
+    path.moveTo(0, 0);
     path.lineTo(0, size.height * 0.5);
-    path.cubicTo(
+
+    // Use two quadratic curves instead of one cubic to be safer for HTML renderer
+    // First half: curve down
+    path.quadraticBezierTo(
       size.width * 0.25,
       size.height * 0.9,
+      size.width * 0.5,
+      size.height * 0.5,
+    );
+    // Second half: curve up
+    path.quadraticBezierTo(
       size.width * 0.75,
       size.height * 0.1,
       size.width,
       size.height * 0.5,
     );
+
     path.lineTo(size.width, size.height);
     path.lineTo(0, size.height);
     path.close();
@@ -172,7 +180,7 @@ class __MessageInputBarState extends ConsumerState<_MessageInputBar> {
         color: AppColors.background,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),

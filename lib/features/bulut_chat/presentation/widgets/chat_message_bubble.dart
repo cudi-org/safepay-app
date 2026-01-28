@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Asegúrate de tener este import
-import 'package:go_router/go_router.dart';
 import 'package:safepay/core/constants/app_colors.dart';
-import 'package:safepay/core/providers/global_providers.dart'; // Replaces app_routes.dart
 import 'package:safepay/utils/currency_formatter.dart';
-import 'package:safepay/data/models/payment_json_model.dart';
 // SOLUCIÓN: Importa el NOTIFIER
 import 'package:safepay/features/bulut_chat/providers/chat_notifier.dart';
 // SOLUCIÓN: Importa el MODELO
@@ -40,7 +37,8 @@ class ConfirmTransactionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.background,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.textSecondary.withOpacity(0.2)),
+        border:
+            Border.all(color: AppColors.textSecondary.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

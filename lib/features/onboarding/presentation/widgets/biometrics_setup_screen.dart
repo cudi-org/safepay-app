@@ -5,7 +5,6 @@ import 'package:safepay/core/constants/app_colors.dart';
 // SOLUCIÓN 1: Se elimina la importación duplicada de 'app_routes.dart'
 // import 'package:safepay/core/providers/global_providers.dart'; // Replaces app_routes.dart
 import 'package:safepay/core/providers/global_providers.dart';
-import 'package:safepay/features/onboarding/presentation/onboarding_screen.dart';
 
 class BiometricsSetupScreen extends ConsumerWidget {
   const BiometricsSetupScreen({super.key});
@@ -214,6 +213,8 @@ class _PinAuthScreenState extends ConsumerState<PinAuthScreen> {
     // Simular validación del PIN
     await Future.delayed(const Duration(milliseconds: 500));
 
+    if (!mounted) return;
+
     // Si el PIN es '111111', es exitoso
     if (_pin == '111111') {
       ref.read(isAuthenticatedProvider.notifier).state = true;
@@ -315,19 +316,27 @@ class _CloudClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    // Empezamos desde abajo a la izquierda, donde la curva termina
+    path.moveTo(0, 0); // Explicit start
     path.lineTo(0, size.height);
-    // Curva principal (inversa de la de chat_screen)
-    path.cubicTo(
+
+    // Split cubic into two quadratics for HTML renderer safety
+    // First half: curve up
+    path.quadraticBezierTo(
       size.width * 0.25,
-      size.height * 0.1, // Curva hacia arriba
-      size.width * 0.75,
-      size.height * 0.9, // Curva hacia abajo
-      size.width,
-      size.height * 0.5, // Termina en la mitad derecha
+      size.height * 0.1,
+      size.width * 0.5,
+      size.height * 0.5,
     );
-    // Línea hasta la esquina superior derecha
+    // Second half: curve down
+    path.quadraticBezierTo(
+      size.width * 0.75,
+      size.height * 0.9,
+      size.width,
+      size.height * 0.5,
+    );
+
     path.lineTo(size.width, 0);
+    path.lineTo(0, 0); // Explicit close properly
     path.close();
     return path;
   }
